@@ -1,11 +1,11 @@
-# Projet_BigData_Groupe_TPT_9
+#  Projet Big Data Analytics avec les Lacs de Données et les tables externes : BDA/DL
 
 Projet Big Data et d’Analyse de la Clientèle d'un Concessionnaire Automobile pour la Recommandation de Modèle
 
 DESCRIPTION DU PROJET
 
 Contexte et objectifs
-Ce projet va permettre d’évaluer les cours Data Analytics. 
+
 Vous avez été contacté par un concessionnaire automobile afin de l'aider à mieux cibler les véhicules susceptibles d'intéresser ses clients. Pour cela il met à votre disposition :
 -Son catalogue de véhicules
 -Son fichier clients concernant les achats de l'année en cours
@@ -29,3 +29,16 @@ Les principales étapes consisteront :
 • Répartir les véhicules et/ou les clients en différentes catégories correspondant chacune à différents besoins. 
 • Mettre au point un modèle de prédiction de la catégorie de véhicules qui répondent aux besoins des clients à l’aide des approches de classification supervisée. Mettez en application une méthodologie de gestion de projet et établissez un plan de mise en œuvre du projet :
 décrire le processus de mise en œuvre, de la sélection des données jusqu’à la détermination de l’algorithme de classification supervisée, utilisé pour prédire la catégorie de véhicules la plus adaptée au client, le plus performant et établir un plan de mise en œuvre à partir de ce cycle.
+
+
+LES PARTIE TRAITER 
+ L’alimentation du data lake
+ HADOOP MAP REDUCE sur le fichier CO2 
+ Techniques de Data Visualisation du sous projet BDA/DL AVEC TABLEAU 
+ Analyse des Données du sous projet BDA/DL par les Techniques de Data Mining, Machine Learning et Deep Learning
+ 1) Analyse exploratoire des données :
+ 2) Identification des catégories de véhicules
+ 3) Application des catégories de véhicules définies aux données des Immatriculations
+ 4) Fusion des données Clients et Immatriculations
+ 5) Création d’un modèle de classification supervisée pour la prédiction de la catégorie de véhicules
+ 6) Application du modèle de prédiction aux données Marketing
