@@ -1,0 +1,158 @@
+programme d'analyse de données 
+
+#connection de R a HIVE : 
+
+-> install.packages("RJDBC", repos = "http://cran.us.r-project.org")'
+ 
+-> library(RJDBC) 
+-> hive_jdbc_jar <- "/usr/local/hive/jdbc/hive-jdbc-3.1.3-standalone.jar"
+-> hive_driver <- "org.apache.hive.jdbc.HiveDriver"
+-> hive_url <- "jdbc:hive2://localhost:10000"
+-> drv <- JDBC(hive_driver, hive_jdbc_jar, "`")
+-> conn <- dbConnect(drv, hive_url, "vagrant", "")
+-> show_databases <- dbGetQuery(conn, "show databases")
+-> print(show_databases)
+
+#Nettoyage de données : 
+# Charger les bibliothèques nécessaires
+library(RJDBC)
+library(tidyverse)
+
+#importation des tables de HIVE vers R : 
+catalogue <- dbGetQuery(conn, "SELECT * FROM catalogue")
+marketing_ext <- dbGetQuery(conn, "SELECT * FROM marketing_ext")
+immatriculation_ext <- dbGetQuery(conn, "SELECT * FROM immatriculation_ext")
+co2_ext <- dbGetQuery(conn, "SELECT * FROM co2_ext")
+customers_ext <- dbGetQuery(conn, "SELECT * FROM customers_ext")
+
+# Configurer la chaîne de connexion JDBC pour Hive
+hive_con <- dbConnect(JDBC("org.apache.hive.jdbc.HiveDriver", "jdbc:hive2://myhost:10000/mydb", "myuser", "mypassword"))
+
+# Extraire les données des tables et les stocker dans des objets R
+catalogue <- dbGetQuery(hive_con, "SELECT * FROM catalogue")
+co2_ext <- dbGetQuery(hive_con, "SELECT * FROM co2_ext")
+customers_ext <- dbGetQuery(hive_con, "SELECT * FROM customers_ext")
+immatriculation_ext <- dbGetQuery(hive_con, "SELECT * FROM immatriculation_ext")
+marketing_ext <- dbGetQuery(hive_con, "SELECT * FROM marketing_ext")
+
+# Identifier les valeurs manquantes dans les tables
+sapply(catalogue, function(x) sum(is.na(x)))
+sapply(co2_ext, function(x) sum(is.na(x)))
+sapply(customers_ext, function(x) sum(is.na(x)))
+sapply(immatriculation_ext, function(x) sum(is.na(x)))
+sapply(marketing_ext, function(x) sum(is.na(x)))
+
+# Identifier les doublons dans les tables
+nrow(catalogue[duplicated(catalogue),])
+nrow(co2_ext[duplicated(co2_ext),])
+nrow(customers_ext[duplicated(customers_ext),])
+nrow(immatriculation_ext[duplicated(immatriculation_ext),])
+nrow(marketing_ext[duplicated(marketing_ext),])
+
+# Identifier les variables liées dans les tables
+cor(catalogue)
+cor(co2_ext)
+cor(customers_ext)
+cor(immatriculation_ext)
+cor(marketing_ext)
+
+# Identifier les variables d'importance particulière dans les tables
+summary(catalogue$price)
+summary(co2_ext$co2)
+summary(customers_ext$age)
+summary(immatriculation_ext$date)
+summary(marketing_ext$targeted)
+
+
+#fonction de conversion numeric : 
+
+convert_numeric <- function(df, col_name) {
+  if (is.numeric(df[[col_name]])) {
+    cat(paste(col_name, "is already numeric. No conversion needed.\n"))
+  } else {
+    if (is.character(df[[col_name]])) {
+      if (nrow(df) == 0) {
+        cat(paste(col_name, "has no data. No conversion needed.\n"))
+      } else {
+        if (all(grepl("^\\d+(\\.\\d+)?$", df[[col_name]]))) {
+          df[[col_name]] <- as.numeric(df[[col_name]])
+          cat(paste("Converted", col_name, "to numeric.\n"))
+        } else {
+          cat(paste(col_name, "contains non-numeric data. No conversion made.\n"))
+        }
+      }
+    } else {
+      cat(paste(col_name, "is not a character column. No conversion made.\n"))
+    }
+  }
+  return(df)
+}
+
+
+#fonction de conversion as.factor
+
+convert_factor <- function(df, col_name) {
+  if (is.factor(df[[col_name]])) {
+    cat(paste(col_name, "is already a factor. No conversion needed.\n"))
+  } else {
+    if (is.numeric(df[[col_name]]) || is.character(df[[col_name]])) {
+      if (nrow(df) == 0) {
+        cat(paste(col_name, "has no data. No conversion needed.\n"))
+      } else {
+        df[[col_name]] <- as.factor(df[[col_name]])
+        cat(paste("Converted", col_name, "to factor.\n"))
+      }
+    } else {
+      cat(paste(col_name, "is not a numeric or character column. No conversion made.\n"))
+    }
+  }
+  return(df)
+}
+
+ 
+
+#conversion logical
+
+convert_logical <- function(df, col_name) {
+  if (is.logical(df[[col_name]])) {
+    cat(paste(col_name, "is already logical. No conversion needed.\n"))
+  } else {
+    if (is.character(df[[col_name]])) {
+      if (nrow(df) == 0) {
+        cat(paste(col_name, "has no data. No conversion needed.\n"))
+      } else {
+        df[[col_name]] <- as.logical(df[[col_name]])
+        cat(paste("Converted", col_name, "to logical.\n"))
+      }
+    } else {
+      cat(paste(col_name, "is not a character column. No conversion made.\n"))
+    }
+  }
+  return(df)
+}
+ 
+
+#catalogue<- filter( catalogue, marque!="?" & marque!="N/D" & marque!=" ")
+catalogue <- subset(catalogue, catalogue.marque != "?" & catalogue.marque != "N/D" & catalogue.marque != " ")
+catalogue<- subset( catalogue, catalogue.nom!="?" & catalogue.nom!="N/D" & catalogue.nom!=" ")
+catalogue<- subset( catalogue, catalogue.puissance!="?" & catalogue.puissance!="N/D" & catalogue.puissance!=" ")
+catalogue<- subset( catalogue, catalogue.longueur!="?" & catalogue.longueur!="N/D" & catalogue.longueur!=" ")
+catalogue<- subset( catalogue, catalogue.nbplaces!="?" & catalogue.nbplaces!="N/D" & catalogue.nbplaces!=" ")
+catalogue<- subset( catalogue, catalogue.nbportes!="?" & catalogue.nbportes!="N/D" & catalogue.nbportes!=" ")
+catalogue<- subset( catalogue, catalogue.couleur!="?" & catalogue.couleur!="N/D" & catalogue.couleur!=" ")
+catalogue<- subset( catalogue, catalogue.occasion!="?" & catalogue.occasion!="N/D" & catalogue.occasion!=" ")
+catalogue<- subset( catalogue, catalogue.prix!="?" & catalogue.prix!="N/D" & catalogue.prix!=" ")
+
+#appelle de la fonction 
+
+catalogue <- convert_logical(catalogue, "catalogue.puissance")
+#appelle de la fonction : 
+catalogue <- convert_factor(catalogue, "catalogue.longueur")
+
+#appelle de la fonction pour la table catalogue 
+catalogue <- convert_numeric(catalogue, "puissance")
+
+#exportation en fichier csv des données nettoyé  :
+ write.csv(cleaned_customers_ext, "Customers_Data.csv")
+
+ 
