@@ -1028,3 +1028,85 @@ print(paste("Accuracy: ", accuracy))
 # Calculate the accuracy Marketing
 accuracy <- mean(svm_pred == marketing$categorie)
 print(paste("Accuracy: ", accuracy))
+
+
+#-----------------------Catégories Taux--------------------------#
+
+#boite a moustache du taux 
+
+boxplot(customer$taux, data=customer,
+        main ="taux"
+        ,col=c("green"))
+
+summary(customer$taux)
+
+#Création de categorie de taux 
+
+
+customer$casTaux<- ifelse(customer$taux < 420 ,"Faible",
+                                                ifelse(customer$taux <607.1, "Moyen",
+                                                       ifelse(customer$taux <823, "Elevée", "Très élevée")))
+
+customer$casTaux <- as.factor(customer$casTaux)
+
+summary (customer$casTaux)
+
+customer <- subset(customer, select = -taux)
+
+
+#ENSEMBLE D'APPRENTISSAGE
+#clients_immatriculations_EA : sélection des 29014 premières lignes de clients_immatriculations.(70% de données)"
+customer_EA_taux <- customer[1:68773,]
+
+#ENSEMBLE DE TEST
+#clients_immatriculations_ET : sélection des  dernières lignes de clients_immatriculations.(30% de données)"
+customer_ET_taux <- customer[68773:98257,]
+
+#Suppression des variables inutiles
+
+customer_EA_taux <- subset(customer_EA_taux, select = -nbPortes)
+customer_EA_taux <- subset(customer_EA_taux, select = -longueur)
+customer_EA_taux <- subset(customer_EA_taux, select = -puissance)
+customer_EA_taux <- subset(customer_EA_taux, select = -marque)
+customer_EA_taux <- subset(customer_EA_taux, select = -nom)
+customer_EA_taux <- subset(customer_EA_taux, select = -couleur)
+customer_EA_taux <- subset(customer_EA_taux, select = -occasion)
+customer_EA_taux <- subset(customer_EA_taux, select = -prix)
+
+
+customer_ET_taux <- subset(customer_ET_taux, select = -nbPortes)
+customer_ET_taux <- subset(customer_ET_taux, select = -longueur)
+customer_ET_taux <- subset(customer_ET_taux, select = -puissance)
+customer_ET_taux <- subset(customer_ET_taux, select = -marque)
+customer_ET_taux <- subset(customer_ET_taux, select = -nom)
+customer_ET_taux <- subset(customer_ET_taux, select = -couleur)
+customer_ET_taux <- subset(customer_ET_taux, select = -occasion)
+customer_ET_taux <- subset(customer_ET_taux, select = -prix)
+str(customer_EA_taux)
+
+str(customer_ET_taux)
+
+#-----------------------Classifieurs avec le taux--------------------------#
+
+
+#---------------------#
+# K-NEAREST NEIGHBORS #
+#---------------------#
+library(kknn)
+
+classifieur_knn <- kknn(categorie ~ ., train = customer_EA_taux, test = customer_ET_taux, k = 5, distance = 2, kernel = "optimal")
+
+# Get the predicted categories from the kknn object
+predicted <- predict(classifieur_knn)
+
+# Create a confusion matrix object
+cm <- table(predicted, customer_ET_taux$categorie)
+
+# Print the confusion matrix
+cm
+
+# Calculate the accuracy of the model
+accuracy <- sum(diag(cm)) / sum(cm)
+
+# Print the accuracy
+print(paste0("Accuracy: ", round(accuracy, 2)))
