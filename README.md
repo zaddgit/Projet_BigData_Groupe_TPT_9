@@ -31,11 +31,11 @@ Les principales étapes consisteront :
 décrire le processus de mise en œuvre, de la sélection des données jusqu’à la détermination de l’algorithme de classification supervisée, utilisé pour prédire la catégorie de véhicules la plus adaptée au client, le plus performant et établir un plan de mise en œuvre à partir de ce cycle.
 
 
-LES PARTIE TRAITER 
- L’alimentation du data lake
- HADOOP MAP REDUCE sur le fichier CO2 
- Techniques de Data Visualisation du sous projet BDA/DL AVEC TABLEAU 
- Analyse des Données du sous projet BDA/DL par les Techniques de Data Mining, Machine Learning et Deep Learning
+LES PARTIE TRAITER :
+ * L’alimentation du data lake
+ * HADOOP MAP REDUCE sur le fichier CO2 
+ * Techniques de Data Visualisation du sous projet BDA/DL AVEC TABLEAU 
+ * Analyse des Données du sous projet BDA/DL par les Techniques de Data Mining, Machine Learning et Deep Learning
  1) Analyse exploratoire des données :
  2) Identification des catégories de véhicules
  3) Application des catégories de véhicules définies aux données des Immatriculations
